@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style type="text/css"> 
+      #button_login{
+      box-sizing: border-box;
+      background-color: #0072BB;
+      color: #ffffff;
+      border-radius: 8px;
+      border: 1px solid #0072BB;
+      min-width: 128px;
+      max-width: 128px;
+    }
+      #button_login:hover{
+      background-color: #0062A2;
+      border: 1px solid #0062A2;
+    }
+      #button_login:pressed{
+      background-color: #00436F;
+      border: 1px solid #00436F;
+    }
+    </style> 
+    <title>Register form</title>
+  </head>
+  <body>
+    <h1>Register form</h1>
+    <form action="../api/auth.php" method="post">
+        <input type="text" name="login" placeholder="Login"><br><br>
+        <input type="text" name="pass" placeholder="Password"><br><br>
+        <input type="hidden" name="key" value="195839"><br>
+        <input type="hidden" name="type" value="register"><br>
+        <input type="submit" id="button_login" value="Submit">
+    </form>
+  </body>
+</html>
