@@ -23,6 +23,16 @@ function queryDB($conn, $sql) {
 	}
 }
 
+function queryFileDB($conn, $filename) {
+	$sql = file_get_contents($filename); 
+	if ($conn->multi_query($sql) === TRUE) {
+		return true;
+	} else {
+		echo "Command error: " . $conn->error . "\r\n";
+		return false;
+	}
+}
+
 function connectDB($conn, $dbname) {
 	$sql = "USE " . $dbname;
 	if (queryDB($conn, $sql)) {
@@ -39,14 +49,14 @@ function createDB($conn, $dbname) {
 }
 
 function createUsersTable($conn) {
-	$sql = "CREATE TABLE users (
-	id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-	login VARCHAR(30) NOT NULL,
-	password VARCHAR(30) NOT NULL,
-	name VARCHAR(50) NOT NULL
-	)";
-	if (queryDB($conn, $sql)) {
-		echo "Table 'Users' created successfully\r\n";
+	//$sql = "CREATE TABLE users (
+	//id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+	//login VARCHAR(30) NOT NULL,
+	//password VARCHAR(30) NOT NULL,
+	//name VARCHAR(50) NOT NULL
+	//)";
+	if (queryFileDB($conn, "create.sql")) {
+		echo "Tables created successfully\r\n";
 	}
 }
 

@@ -1,12 +1,33 @@
 <?php
-<<<<<<< HEAD
-	echo $_POST["login"]."\r\n";
-	echo $_POST["pass"]."\r\n";
-	echo $_POST["key"]."\r\n";
-	echo $_POST["type"]."\r\n";
-=======
-	echo $_POST["login"];
-	echo $_POST["pass"];
-	echo $_POST["key"];
->>>>>>> 81c5cd927c7a9678bb8e38b730ef5593f274a0b2
+	function isUserExists($conn, $login) {
+		$sql = "SELECT id FROM users WHERE login='".$login."'";
+		return ($conn->query($sql)->num_rows === 0);
+	}
+
+	function registerUser($login, $pass, $name) {
+		$conn = connectDefault();
+		if (!isset($conn)) {
+			return 'DB FAIL';
+		}
+		if (isUserExists($conn, $login)) {
+			$sql = "INSERT INTO users (login, password, name) VALUES ('".$login."', '".$pass."', '".$name."')";
+			if ($conn->query($sql) === TRUE) {
+				$ret->status = 1;
+				$conn->close;
+				return json_encode($ret);
+			}
+		}
+		$ret->status = 0;
+		$conn->close;
+		return json_encode($ret);
+	}
+
+	require 'connect.php';
+	$msgtype = filter_var(trim($_GET['type']), FILTER_SANITIZE_STRING);
+	if ($msgtype === "register") {
+		$ulogin = filter_var(trim($_GET['login']), FILTER_SANITIZE_STRING);
+		$upass = filter_var(trim($_GET['pass']), FILTER_SANITIZE_STRING);
+		$uname = filter_var(trim($_GET['name']), FILTER_SANITIZE_STRING);
+		echo registerUser($ulogin, $upass, $uname);
+	}
 ?>
