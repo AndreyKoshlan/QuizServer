@@ -44,19 +44,41 @@
 		return json_encode($ret);
 	}
 
+	function getStatus($conn, $sid) {
+		$sql = "SELECT sid FROM sessions WHERE sid='".$sid."'";
+		$rez = $conn->query($sql);
+		if ($rez->num_rows > 0) {
+			$ret->status = 1;
+			return json_encode($ret);
+		} else {
+			$ret->status = 0;
+			return json_encode($ret);
+		}
+	}
+
 	require 'connect.php';
 	$msgtype = filter_var(trim($_GET['type']), FILTER_SANITIZE_STRING);
 	$conn = connectDefault();
 	if (!isset($conn)) {
 		$ret->status = 0;
 		$ret->reason = "Internal Server Error";
-		return json_encode($ret);
+		echo json_encode($ret);
+		die();
+	}
+	if ($msgtype === "login") {
+		$ulogin = filter_var(trim($_GET['login']), FILTER_SANITIZE_STRING);
+		$upass = filter_var(trim($_GET['pass']), FILTER_SANITIZE_STRING);
+		echo loginUser($conn, $ulogin, $upass);
 	}
 	if ($msgtype === "register") {
 		$ulogin = filter_var(trim($_GET['login']), FILTER_SANITIZE_STRING);
 		$upass = filter_var(trim($_GET['pass']), FILTER_SANITIZE_STRING);
 		$uname = filter_var(trim($_GET['name']), FILTER_SANITIZE_STRING);
 		echo registerUser($conn, $ulogin, $upass, $uname);
+	}
+	if ($msgtype === "status") {
+		$usid = filter_var(trim($_GET['sid']), FILTER_SANITIZE_STRING);
+		echo getStatus($conn, $usid);
 	}
 	$conn->close;
 ?>
