@@ -56,6 +56,18 @@
 		}
 	}
 
+	function logoffUser($conn, $sid) {
+		$sql = "DELETE FROM sessions WHERE sid='".$sid."'";
+		if ($conn->query($sql) === TRUE) {
+			$ret->status = 1;
+			return json_encode($ret);
+		} else {
+			$ret->status = 0;
+			$ret->error = "Token is incorrect";
+			return json_encode($ret);
+		}
+	}
+
 	require 'connect.php';
 	$msgtype = filter_var(trim($_GET['type']), FILTER_SANITIZE_STRING);
 	$conn = connectDefault();
@@ -79,6 +91,10 @@
 	if ($msgtype === "status") {
 		$usid = filter_var(trim($_GET['sid']), FILTER_SANITIZE_STRING);
 		echo getStatus($conn, $usid);
+	}
+	if ($msgtype === "logoff") {
+		$usid = filter_var(trim($_GET['sid']), FILTER_SANITIZE_STRING);
+		echo logoffUser($conn, $usid);
 	}
 	$conn->close;
 ?>
