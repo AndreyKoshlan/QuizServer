@@ -96,5 +96,5 @@
 		$usid = filter_var(trim($_POST['sid']), FILTER_SANITIZE_STRING);
 		echo logoffUser($conn, $usid);
 	}
-	$conn->close;
+	$conn->close();
 ?>
