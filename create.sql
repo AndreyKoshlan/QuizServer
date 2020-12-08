@@ -12,3 +12,18 @@ CREATE TABLE sessions (
 	ip VARCHAR(50) NOT NULL,
 	sid VARCHAR(128) NOT NULL
 	);
+CREATE TABLE groups (
+	groupid INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+	name VARCHAR(50) NOT NULL
+	);
+INSERT INTO groups (name) VALUES ("Все опросы");
+INSERT INTO groups (name) VALUES ("Образовательное");
+INSERT INTO groups (name) VALUES ("Развлечения");
+CREATE TABLE tests (
+	testid INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+	name VARCHAR(50) NOT NULL,
+	content BLOB NOT NULL,
+	answers BLOB NOT NULL,
+	groupid VARCHAR(50) NOT NULL,
+	uid INT NOT NULL
+	);
