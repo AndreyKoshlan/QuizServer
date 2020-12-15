@@ -1,11 +1,5 @@
 <?php
   
-  /*
-  	main - общедоступные тесты
-    my - свои тесты
-    крч тут не так будет. отдельно проверяй если groupid === "my", тогда выбирай все testid, где uid = id_пользователя я пошёл кушац красава
-  */
-  
 	function getUserID($conn, $user_sid) {
   	$sql = "SELECT uid FROM sessions WHERE sid = '".$user_sid."'";
     $rez = $conn->query($sql);
