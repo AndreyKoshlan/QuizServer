@@ -21,8 +21,9 @@
     if ($rez->num_rows > 0) {
     	$ret->status = 1;
       while ($row = $rez->fetch_assoc()) {
-      	$group->groupid = $row["id"];
-        $group->name = $row["name"];
+        $group = Array();
+      	$group['groupid'] = $row["id"];
+        $group['name'] = $row["name"];
         $ret->groups[] = $group;
       }
       if (isset($sid)) {
@@ -61,13 +62,13 @@
     }
   	$sql = "SELECT testid, name, uid FROM tests WHERE uid = '".$uid."'";
 		$result = $conn->query($sql);
-    getListGroupCustom($conn, $result);
+    return getListGroupCustom($conn, $result);
   }
 
 	function getListGroupByName($conn, $groupid) {
   	$sql = "SELECT testid, name, uid FROM tests WHERE groupid = '".$groupid."'";
 		$result = $conn->query($sql);
-		getListGroupCustom($conn, $result);
+		return getListGroupCustom($conn, $result);
   }
 
 	function getList($conn, $sid, $groupid) {
@@ -95,7 +96,7 @@
 	if ($msgtype === "list") {
 		$sid = filter_var(trim($_POST['sid']), FILTER_SANITIZE_STRING);
 		$groupid = filter_var(trim($_POST['groupid']), FILTER_SANITIZE_STRING);
-		echo getTaskList($conn, $sid, $groupid);
+		echo getList($conn, $sid, $groupid);
 	}
 	$conn->close();
 ?>
