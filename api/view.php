@@ -14,9 +14,12 @@
     $rez = $conn->query($sql);
     if ($rez->num_rows > 0) {
     	$ret->status = 1;
+      $maingroup->groupid = "main";
+      $maingroup->name = "Все опросы";
+      $ret->groups[] = $maingroup;
       while ($row = $rez->fetch_assoc()) {
         $group = Array();
-      	$group['groupid'] = $row["id"];
+      	$group['groupid'] = $row["groupid"];
         $group['name'] = $row["name"];
         $ret->groups[] = $group;
       }
@@ -59,6 +62,12 @@
     return getListGroupCustom($conn, $result);
   }
 
+  function getListGroupAll($conn) {
+    $sql = "SELECT testid, name, uid FROM tests";
+    $result = $conn->query($sql);
+    return getListGroupCustom($conn, $result);
+  }
+
 	function getListGroupByName($conn, $groupid) {
   	$sql = "SELECT testid, name, uid FROM tests WHERE groupid = '".$groupid."'";
 		$result = $conn->query($sql);
@@ -67,8 +76,10 @@
 
 	function getList($conn, $sid, $groupid) {
     $uid = getUserID($conn, $sid);
-    if ($groupid === "my") {
+    if ($groupid === "my")
   		return getListGroupMy($conn, $uid);
+    if ($groupid === "main") {
+      return getListGroupAll($conn, $uid);
     } else {
     	return getListGroupByName($conn, $groupid);
     }

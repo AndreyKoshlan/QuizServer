@@ -13,12 +13,11 @@ CREATE TABLE sessions (
 	sid VARCHAR(128) NOT NULL
 	);
 CREATE TABLE groups (
-	groupid INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+	groupid VARCHAR(50) PRIMARY KEY,
 	name VARCHAR(50) NOT NULL
 	);
-INSERT INTO groups (name) VALUES ("Все опросы");
-INSERT INTO groups (name) VALUES ("Образовательное");
-INSERT INTO groups (name) VALUES ("Развлечения");
+INSERT INTO groups (groupid, name) VALUES ("edu", "Образовательное");
+INSERT INTO groups (groupid, name) VALUES ("fun", "Развлечения");
 CREATE TABLE tests (
 	testid INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
 	name VARCHAR(50) NOT NULL,
