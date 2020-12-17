@@ -36,6 +36,7 @@ function CreateTest($conn, $sid, $content, $answers, $name, $groupid, $uid){
 		} else {
 			$ret->status = 0;
 			$ret->error = "Token is incorrect";
+		}
 	}
 
 
