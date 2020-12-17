@@ -26,7 +26,7 @@ function StartTest($conn, $testid, $sid) {
 	
 function CreateTest($conn, $sid, $content, $answers, $name, $groupid, $uid){
 		if (CheckSid($conn, $sid)){
-			$sql = "INSERT INTO tests (content, answers, sid, name, groupid, uid) VALUES ('".$content."', '".$answers."', '".$sid."', '".$name."', '".$groupid."', '".$uid."')";
+			$sql = "INSERT INTO tests (content, answers, name, groupid, uid) VALUES ('".$content."', '".$answers."', '".$name."', '".$groupid."', '".$uid."')";
 			if ($conn->query($sql) === TRUE) {
 			res->status = 1;
 			} else {
