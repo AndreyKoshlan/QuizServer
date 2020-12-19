@@ -39,9 +39,10 @@
 		if ($rows->num_rows > 0) {
       $ret->status = 1;
       while ($row = $rows->fetch_assoc()) {
-      	$test->testid = $row["testid"];
-        $test->name = $row["name"];
-        $test->uid = $row["uid"];
+        $test = Array();
+      	$test['testid'] = $row["testid"];
+        $test['name'] = $row["name"];
+        $test['uid'] = $row["uid"];
         $ret->tests[] = $test;
       }
 		} else {
