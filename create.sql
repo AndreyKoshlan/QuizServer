@@ -21,8 +21,8 @@ INSERT INTO groups (groupid, name) VALUES ("fun", "Развлечения");
 CREATE TABLE tests (
 	testid INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
 	name VARCHAR(50) NOT NULL,
-	content BLOB NOT NULL,
-	answers BLOB NOT NULL,
+	content TEXT NOT NULL,
+	answers TEXT NOT NULL,
 	groupid VARCHAR(50) NOT NULL,
 	uid INT NOT NULL
 	);
