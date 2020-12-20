@@ -11,15 +11,20 @@ function CheckSid($conn, $sid) {
 	}
 
 function StartTest($conn, $testid, $sid) {
-		$sql = "SELECT content FROM tests WHERE testid = '".$testid."'";
-		$rez = $conn->query($sql);
 		if (CheckSid($conn, $sid)) {
-			$row = $rez->fetch_assoc();
-			$ret->status = 1;
-			$ret->content = $row["content"];
+			$sql = "SELECT content FROM tests WHERE testid = '".$testid."'";
+			$rez = $conn->query($sql);
+			if ($rez->num_rows > 0) { 
+				$row = $rez->fetch_assoc();
+				$ret->status = 1;
+				$ret->content = $row["content"];
+			} else {
+				$ret->status = 0;
+				$ret->error = "Test not found";
+			}
 		} else {
 			$ret->status = 0;
-			$ret->error = "Test not found";
+			$ret->error = "Token is incorrect";
 		}
 		return json_encode($ret);
 	}
@@ -28,7 +33,7 @@ function CreateTest($conn, $sid, $content, $answers, $name, $groupid, $uid){
 		if (CheckSid($conn, $sid)){
 			$sql = "INSERT INTO tests (content, answers, name, groupid, uid) VALUES ('".$content."', '".$answers."', '".$name."', '".$groupid."', '".$uid."')";
 			if ($conn->query($sql) === TRUE) {
-			res->status = 1;
+				$ret->status = 1;
 			} else {
 				$ret->status = 0;
 				$ret->error = "Test not created";
@@ -38,9 +43,6 @@ function CreateTest($conn, $sid, $content, $answers, $name, $groupid, $uid){
 			$ret->error = "Token is incorrect";
 		}
 	}
-
-
-
 
 require 'connect.php';
 	$msgtype = filter_var(trim($_POST['type']), FILTER_SANITIZE_STRING);
@@ -54,7 +56,7 @@ require 'connect.php';
 	if ($msgtype === "start") {
 		$sid = filter_var(trim($_POST['sid']), FILTER_SANITIZE_STRING);
 		$testid = filter_var(trim($_POST['testid']), FILTER_SANITIZE_STRING);
-		echo StartTest($conn, $sid, $testid);
+		echo StartTest($conn, $testid, $sid);
 	}
 	if ($msgtype === "finish") {
 		$sid = filter_var(trim($_POST['sid']), FILTER_SANITIZE_STRING);
