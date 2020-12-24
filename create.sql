@@ -13,9 +13,11 @@ CREATE TABLE sessions (
 	sid VARCHAR(128) NOT NULL
 	);
 CREATE TABLE groups (
-	groupid VARCHAR(50) PRIMARY KEY,
+	id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+	groupid VARCHAR(50) NOT NULL,
 	name VARCHAR(50) NOT NULL
 	);
+INSERT INTO groups (groupid, name) VALUES ("polls", "Опросы");
 INSERT INTO groups (groupid, name) VALUES ("edu", "Образовательное");
 INSERT INTO groups (groupid, name) VALUES ("fun", "Развлечения");
 CREATE TABLE tests (

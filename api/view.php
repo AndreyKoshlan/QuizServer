@@ -15,7 +15,7 @@
     if ($rez->num_rows > 0) {
     	$ret->status = 1;
       $maingroup->groupid = "main";
-      $maingroup->name = "Все опросы";
+      $maingroup->name = "Все группы";
       $ret->groups[] = $maingroup;
       while ($row = $rez->fetch_assoc()) {
         $group = Array();
