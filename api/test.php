@@ -28,9 +28,39 @@ function StartTest($conn, $testid, $sid) {
 		}
 		return json_encode($ret);
 	}
+
+function GetTest($conn, $testid, $sid) {
+	$sql = "SELECT uid FROM sessions WHERE sid = '".$sid."'";
+	$rez = $conn->query($sql);
+	if ($rez->num_rows > 0) {
+		$row = $rez->fetch_assoc();
+		$uid = $row["uid"];
+		$sql = "SELECT name, groupid, content, answers FROM tests WHERE testid = '".$testid."' AND uid = '".$uid."'";
+		$taskrez = $conn->query($sql);
+			if ($taskrez->num_rows > 0) { 
+				$row = $taskrez->fetch_assoc();
+				$ret->status = 1;
+				$ret->name = $row["name"];
+				$ret->groupid = $row["groupid"];
+				$ret->content = $row["content"];
+				$ret->answers = $row["answers"];
+			} else {
+				$ret->status = 0;
+				$ret->error = "Test not found";
+			}
+	} else {
+		$ret->status = 0;
+		$ret->error = "Token is incorrect";
+	}
+	return json_encode($ret);
+}
 	
-function CreateTest($conn, $sid, $content, $answers, $name, $groupid, $uid) {
-		if (CheckSid($conn, $sid)){
+function CreateTest($conn, $sid, $content, $answers, $name, $groupid) {
+		$sql = "SELECT uid FROM sessions WHERE sid = '".$sid."'";
+		$rez = $conn->query($sql);
+		if ($rez->num_rows > 0) {
+			$row = $rez->fetch_assoc();
+			$uid = $row["uid"];
 			$sql = "INSERT INTO tests (content, answers, name, groupid, uid) VALUES ('".$content."', '".$answers."', '".$name."', '".$groupid."', '".$uid."')";
 			if ($conn->query($sql) === TRUE) {
 				$ret->status = 1;
@@ -42,7 +72,35 @@ function CreateTest($conn, $sid, $content, $answers, $name, $groupid, $uid) {
 			$ret->status = 0;
 			$ret->error = "Token is incorrect";
 		}
+		return json_encode($ret);
+}
+
+function ChangeTest($conn, $testid, $sid, $content, $answers, $name, $groupid) {
+	$sql = "SELECT uid FROM sessions WHERE sid = '".$sid."'";
+	$rez = $conn->query($sql);
+	if ($rez->num_rows > 0) {
+		$row = $rez->fetch_assoc();
+		$uid = $row["uid"];
+		$sql = "SELECT testid FROM tests WHERE testid = '".$testid."' AND uid = '".$uid."'";
+		$taskrez = $conn->query($sql);
+		if ($taskrez->num_rows > 0) { 
+			$sql = "UPDATE tests SET content='".$content."', answers='".$answers."', name='".$name."', groupid='".$groupid."', uid='".$uid."' WHERE testid = '".$testid."'";
+			if ($conn->query($sql) === TRUE) {
+				$ret->status = 1;
+			} else {
+				$ret->status = 0;
+				$ret->error = "Can''t update test";
+			}
+		} else {
+			$ret->status = 0;
+			$ret->error = "Test not found";
+		}
+	} else {
+		$ret->status = 0;
+		$ret->error = "Token is incorrect";
 	}
+	return json_encode($ret);
+}
 
 function CompareAnswers($client, $server) {
 	$jc = json_decode($client, true);
@@ -111,8 +169,21 @@ require 'connect.php';
 		$answers = filter_var(trim($_POST['answers']), FILTER_SANITIZE_STRING);
 		$name = filter_var(trim($_POST['name']), FILTER_SANITIZE_STRING);
 		$groupid = filter_var(trim($_POST['groupid']), FILTER_SANITIZE_STRING);
-		$uid = filter_var(trim($_POST['uid']), FILTER_SANITIZE_STRING);
-		echo CreateTest($conn, $sid, $content, $answers, $name, $groupid, $uid);
+		echo CreateTest($conn, $sid, $content, $answers, $name, $groupid);
+	}
+	if ($msgtype === "change") {
+		$sid = filter_var(trim($_POST['sid']), FILTER_SANITIZE_STRING);
+		$content = filter_var(trim($_POST['content']), FILTER_SANITIZE_STRING);
+		$answers = filter_var(trim($_POST['answers']), FILTER_SANITIZE_STRING);
+		$name = filter_var(trim($_POST['name']), FILTER_SANITIZE_STRING);
+		$groupid = filter_var(trim($_POST['groupid']), FILTER_SANITIZE_STRING);
+		$testid = filter_var(trim($_POST['testid']), FILTER_SANITIZE_STRING);
+		echo ChangeTest($conn, $testid, $sid, $content, $answers, $name, $groupid);
+	}
+	if ($msgtype === "get") {
+		$sid = filter_var(trim($_POST['sid']), FILTER_SANITIZE_STRING);
+		$testid = filter_var(trim($_POST['testid']), FILTER_SANITIZE_STRING);
+		echo GetTest($conn, $testid, $sid);
 	}
 	$conn->close();
 
