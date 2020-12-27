@@ -103,13 +103,16 @@ function ChangeTest($conn, $testid, $sid, $content, $answers, $name, $groupid) {
 }
 
 function CompareAnswers($client, $server) {
+	$server = str_replace("&#34;", "\"", $server);
+	$client = str_replace("&#34;", "\"", $client);
 	$jc = json_decode($client, true);
 	$js = json_decode($server, true);
+	$js = $js["answers"];
 	$points = 0;
 	$questions = 0;
 	for ($i = 0; $i < count($js["pages"]); $i++) {
 		$questions++;
-		if ($jc["pages"] === $js["pages"]) {
+		if ($jc[$i]["variants"] === $js["pages"][$i]["variants"]) { //FIX IT
 			$points++;
 		}
 	}
@@ -135,6 +138,26 @@ function FinishTest($conn, $sid, $testid, $answers) {
 		} else {
 			$ret->status = 0;
 			$ret->error = "Test not found";
+		}
+	} else {
+		$ret->status = 0;
+		$ret->error = "Token is incorrect";
+	}
+	return json_encode($ret);
+}
+
+function DelTest($conn, $testid, $sid) {
+	$sql = "SELECT uid FROM sessions WHERE sid = '".$sid."'";
+	$rez = $conn->query($sql);
+	if ($rez->num_rows > 0) {
+		$row = $rez->fetch_assoc();
+		$uid = $row["uid"];
+		$sql = "DELETE FROM tests WHERE uid='".$uid."'";
+		if ($conn->query($sql) === TRUE) {
+			$ret->status = 1;
+		} else {
+			$ret->status = 0;
+			$ret->error = "Can''t remove test";
 		}
 	} else {
 		$ret->status = 0;
@@ -184,6 +207,11 @@ require 'connect.php';
 		$sid = filter_var(trim($_POST['sid']), FILTER_SANITIZE_STRING);
 		$testid = filter_var(trim($_POST['testid']), FILTER_SANITIZE_STRING);
 		echo GetTest($conn, $testid, $sid);
+	}
+	if ($msgtype === "del") {
+		$sid = filter_var(trim($_POST['sid']), FILTER_SANITIZE_STRING);
+		$testid = filter_var(trim($_POST['testid']), FILTER_SANITIZE_STRING);
+		echo DelTest($conn, $testid, $sid);
 	}
 	$conn->close();
 
