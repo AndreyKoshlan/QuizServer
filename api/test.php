@@ -151,8 +151,7 @@ function DelTest($conn, $testid, $sid) {
 	$rez = $conn->query($sql);
 	if ($rez->num_rows > 0) {
 		$row = $rez->fetch_assoc();
-		$uid = $row["uid"];
-		$sql = "DELETE FROM tests WHERE uid='".$uid."'";
+		$sql = "DELETE FROM tests WHERE testid='".$testid."'";
 		if ($conn->query($sql) === TRUE) {
 			$ret->status = 1;
 		} else {
